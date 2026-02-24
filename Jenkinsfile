@@ -8,16 +8,19 @@ pipeline {
             }
         }
 
-        stage('Push to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh '''
-                    echo $PASS | docker login -u $USER --password-stdin
-                    docker push abhignashetty/ci-mini-app:latest
-                    '''
-                }
-            }
+       stage('Push to Docker Hub') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub',
+        usernameVariable: 'DOCKER_USER',
+        passwordVariable: 'DOCKER_PASS')]) {
+
+            sh '''
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker push abhignashetty/ci-mini-app:latest
+            '''
         }
+    }
+}
 
         stage('Deploy to Kubernetes') {
             steps {
